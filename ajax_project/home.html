@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BOOKRIS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="navBar">
+      <ul>
+        <li><a href="">Manage Books</a></li>
+        <li><a href="">History</a></li>
+        <li><a href="">Favorites</a></li>
+      </ul>
+    </nav>
+
+    <div class="popupBook" id="popupBook"></div>
+
+    <div class="searchBar">
+      <form id="searchBookByStr">
+        <h1>Search a book</h1>
+        <input id="searchInput" type="text" placeholder="Search..." />
+        <button type="submit">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-search"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div class="spinner"></div>
+    <div id="displayBooksBySearch" class="displayBooksBySearch hidden"></div>
+
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="/ajax_project/js/books.js"></script>
+  </body>
+</html>
