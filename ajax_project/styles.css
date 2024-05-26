@@ -1,7 +1,19 @@
 @import url(/ajax_project/css/spinner.css);
 @import url(/ajax_project/css/navbar.css);
+@import url(/ajax_project/css/bookCard.css);
+@import url(/ajax_project/css/searchBar.css);
 
 body {
   margin: 0;
   background-color: #3C5B6F;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
 }

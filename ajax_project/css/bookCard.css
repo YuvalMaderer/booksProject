@@ -1,0 +1,30 @@
+.displayBooksBySearch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.bookCard {
+    background-color: #948979;
+    display: flex;
+    width: 400px;
+    height: 200px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+img {
+    width: 120px;
+    height: 200px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.bookProperties p {
+    font-size: 12px;
+}
+
+.bookProperties h2 {
+    font-size: 16px;
+}
