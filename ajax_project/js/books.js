@@ -55,7 +55,8 @@ function displayPage(books) {
   displayBooksBySearch.innerHTML = paginatedBooks
     .map(
       (book) => `
-      <div class="bookCard" onclick="openBookProperties()">
+      <div class="bookCard" onclick="openBookProperties(this)">
+            <span class="hidden" id="bookId">${book.id}</span>
           <img src="${book.img}" alt="${book.title}">
           <div class="bookProperties">
               <h2>${(book.title).slice(0, 40) + (book.title.length > 40 ? "..." : "")}</h2>
@@ -80,4 +81,25 @@ function changePage(direction) {
 
 function openBookProperties() {
   bookProperties.style.display = "block";
+}
+
+async function openBookProperties(svgElement) {
+    const black = document.querySelector(".black");
+    const showBook = document.querySelector("#showBookProperties")
+    black.classList.remove("hidden");
+    const bookId = svgElement.querySelector("#bookId").outerText;
+    const response = await axios.get(`${url}/${bookId}`)
+    console.log(response.data);
+    showBook.innerHTML = `
+    <img src="${response.data.img}" alt="${response.data.title}">
+    <h2>${response.data.title}</h2>
+    <p>Author: ${response.data.author}</p>
+    <p>Description: ${response.data.description}</p>
+    <p>Categories: ${response.data.categories}</p>
+    <p>Page Count: ${response.data.pageCount}</p>
+    <p>ID: ${response.data.id}</p>
+    <p>ISBN: ${response.data.ISBN}</p>
+    <button>close</button>
+    `
+    showBook.classList.remove("hidden")
 }
