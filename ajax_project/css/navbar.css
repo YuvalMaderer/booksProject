@@ -1,0 +1,34 @@
+.navBar {
+    background-color: #153448;
+    padding: 5px;
+}
+
+ul {
+    display: flex;
+    justify-content: space-evenly;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    border-radius: 5px;
+    width: 150px;
+    height: 50px;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    list-style-type: none; 
+}
+
+li:hover {
+    transition: 0.4s ease-in-out;
+    background-color: #153d57;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
