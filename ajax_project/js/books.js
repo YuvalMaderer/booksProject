@@ -63,7 +63,7 @@ function displayPage(books) {
           <img src="${book.img}" alt="${book.title}">
           <div class="bookProperties">
               <h2>${(book.title).slice(0, 40) + (book.title.length > 40 ? "..." : "")}</h2>
-              <p>Author: ${book.author}</p>
+              <p>Author: ${(book.author).slice(0, 10) + (book.author.length > 10 ? "..." : "")}</p>
               <p>Description: ${(book.description).slice(0, 250) + (book.description.length > 250 ? "..." : "")}</p>
           </div>
       </div>
@@ -212,7 +212,8 @@ function updateBook(svgElement) {
           editButton.classList.remove("hidden");
           saveButton.classList.add("hidden");
           deleteButton.classList.add("hidden");
-          showSnackbar("Book updated successfully!");
+          showSnackbar("Book updated and History item added successfully!");
+          addToHistory("update",bookId);
         } catch (error) {
           showSnackbar("Error updating book");
         }
@@ -227,11 +228,13 @@ function deleteBook() {
   
   axios.delete(`http://localhost:8001/books/${bookId}`)
     .then(() => {
-      showSnackbar(`Book ${title} deleted successfully!`);
+      showSnackbar(`Book ${title} deleted and History item added successfully!`);
+      addToHistory("delete",bookId);
       black.classList.add("hidden");
       showBook.classList.add("hidden");
     })
     .catch((error) => {
+      console.log(error);
       showSnackbar(`There was an error deleting the book ${title}`);
     });
 }
@@ -251,3 +254,44 @@ function showSnackbar(message) {
   }, 2400);
 }
 
+
+async function addToHistory(oper, bID) {
+  const historyItem = {
+    operation: oper,
+    time: new Date().toISOString(),
+    bookId: bID  
+  };
+  try {
+    await saveToHistory(historyItem);
+    createTable(); 
+  } catch (error) {
+    showSnackbar('Error adding history item');
+  }
+}
+
+async function saveToHistory(historyItem) {
+  try {
+    return await axios.post('http://localhost:8001/history', historyItem);
+  } catch (error) {
+    showSnackbar('Error saving history item:');
+  }
+}
+
+async function createTable() {
+  const table = document.getElementById("operations");
+  table.innerHTML = '';
+  try {
+    const response = await axios.get("http://localhost:8001/history");
+    response.data.forEach(item => {
+      table.innerHTML += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${item.operation}</td>
+          <td>${item.time}</td>
+          <td>${item.bookId}</td>
+        </tr>`;
+    });
+  } catch (error) {
+    showSnackbar('Error fetching history items');
+  }
+}

@@ -3,15 +3,27 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    padding-bottom: 15px;
 }
 
 .bookCard {
-    background-color: #948979;
+    position: relative;
+    bottom: 0;
+    transition: 0.1s;
+    background-color: var(--light-yellow);
+    color: var(--blue);
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    text-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     display: flex;
     width: 400px;
     height: 200px;
     padding: 10px;
     border-radius: 10px;
+}
+
+.bookCard:hover {
+    bottom: 5px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 img {

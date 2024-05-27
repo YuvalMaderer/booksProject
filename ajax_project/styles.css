@@ -4,12 +4,19 @@
 @import url(/ajax_project/css/searchBar.css);
 @import url(/ajax_project/css/showBookProperties.css);
 @import url(/ajax_project/css/snackbar.css);
+@import url(/ajax_project/css/pagination.css);
 
+:root {
+  --light-yellow: #FFFAE6;
+  --light-orange: #FF9F66;
+  --orange: #FF5F00;
+  --blue: #002379;
+}
 
 body {
   height: 100vh;
   margin: 0;
-  background-color: #3C5B6F;
+  background-color: var(--light-orange);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -27,6 +34,6 @@ body {
   z-index: 999;
   position: absolute;
   width: 100%;
-  height: 150%;
+  height: 180%;
   opacity: 40%;
 }
