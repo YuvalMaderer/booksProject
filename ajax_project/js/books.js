@@ -9,6 +9,7 @@ const booksPerPage = 9;
 let currentPage = 1;
 let totalBooks = 0;
 let snackbarTimeout
+const spinner = document.getElementById("spinner");
 
 document
   .getElementById("searchBookByStr")
@@ -23,6 +24,7 @@ prevPageButton.addEventListener("click", () => changePage(-1));
 nextPageButton.addEventListener("click", () => changePage(1));
 
 async function searchBooks(query) {
+  spinner.classList.remove("hidden");
   displayBooksBySearch.innerHTML = "";
   //   spinner.classList.remove("hidden");
   displayBooksBySearch.classList.add("hidden");
@@ -35,16 +37,15 @@ async function searchBooks(query) {
     totalBooks = filteredBooks.length;
 
     if (totalBooks === 0) {
-      displayBooksBySearch.innerHTML = "<p>No books found.</p>";
+      showSnackbar("No books found")
+      spinner.classList.add("hidden");
     } else {
       displayPage(filteredBooks);
     }
   } catch (error) {
-    console.error("Error fetching books:", error.message);
-    displayBooksBySearch.innerHTML =
-      "<p>Error fetching books. Please try again later.</p>";
+      showSnackbar("Error fetching books")
+      spinner.classList.add("hidden");
   } finally {
-    // spinner.classList.add("hidden");
     displayBooksBySearch.classList.remove("hidden");
   }
 }
@@ -74,16 +75,13 @@ function displayPage(books) {
   prevPageButton.classList.toggle("hidden", currentPage === 1);
   nextPageButton.classList.toggle("hidden", end >= totalBooks);
   pageNumberElement.innerText = currentPage;
+  spinner.classList.add("hidden");
 }
 
 function changePage(direction) {
   currentPage += direction;
   const input = document.getElementById("searchInput").value;
   searchBooks(input);
-}
-
-function openBookProperties() {
-  bookProperties.style.display = "block";
 }
 
 async function openBookProperties(svgElement) {
@@ -106,7 +104,7 @@ async function openBookProperties(svgElement) {
     </div>
     <form id="updateBookForm">
     <label>Title: </label>
-    <h2 id="updateBookTitle">${response.data.title}</h2>
+    <p id="updateBookTitle">${response.data.title}</p>
     <label>Author: </label>
     <p id="updateBookAuthor">${response.data.author}</p>
     <label>Description: </label>
@@ -121,7 +119,8 @@ async function openBookProperties(svgElement) {
     <p id="updateBookISBN">${response.data.ISBN}</p>
     <label>Copies: </label>
     <p id="updateBookNumCopies">${response.data.copies}</p>
-    <button type="submit" onClick="updateBook()" class="save hidden" id="save">Save</button>
+    <button type="submit" onClick="updateBook(this)" class="save hidden" id="save">Save</button>
+    <button type="button" onClick="deleteBook()" class="delete hidden" id="delete">Delete</button>
     </form>
     `
     showBook.classList.remove("hidden")
@@ -137,8 +136,8 @@ function closeBook() {
 function editBook(svgElement) {
   // Select all paragraph elements inside foreignObject elements within svgElement
   const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
-  const h2 = svgElement.parentNode.parentNode.querySelectorAll('h2');
   const saveButton = document.getElementById("save");
+  const deleteButton = document.getElementById("delete");
 
   paragraphs.forEach(paragraph => {
     if (paragraph.id === "updateBookId") {
@@ -158,26 +157,19 @@ function editBook(svgElement) {
 
   });
 
-  h2.forEach(h => {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.setAttribute('required', '');
-    input.value = h.textContent;
-    input.id = h.id;
-    h.parentNode.replaceChild(input, h);
-  });
-
   const editButton = document.querySelector("#editButton");
   if (editButton) {
     editButton.classList.add("hidden");
     saveButton.classList.remove("hidden");
+    deleteButton.classList.remove("hidden");
   }
 }
 
-function updateBook() {
+function updateBook(svgElement) {
   document
       .getElementById("updateBookForm")
       .addEventListener("submit", async function (event) {
+        console.log(event)
         event.preventDefault();
         const bookId = document.getElementById("updateBookId").innerText;
         const img = document.getElementById("image").src;
@@ -188,6 +180,18 @@ function updateBook() {
         const categories = document.getElementById("updateBookCategories").value;          
         const ISBN = document.getElementById("updateBookISBN").value;
         const copies = parseInt(document.getElementById("updateBookNumCopies").value);
+        const inputs = svgElement.parentNode.querySelectorAll('input[type="text"]');
+        const editButton = document.querySelector("#editButton");
+        const saveButton = document.getElementById("save");
+        const deleteButton = document.getElementById("delete");
+        if (numPages < 1) {
+          showSnackbar('Page count must be greater than zero');
+          return;
+        }
+        if (copies < 0) {
+          showSnackbar('Number of copies must be positive');
+          return;
+        }
         try {
           await axios.put(`http://localhost:8001/books/${bookId}`, {
             title,
@@ -199,12 +203,39 @@ function updateBook() {
             ISBN,
             copies
           });
+          inputs.forEach(input => {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = input.value;
+            paragraph.id = input.id;
+            input.parentNode.replaceChild(paragraph, input);
+          });
+          editButton.classList.remove("hidden");
+          saveButton.classList.add("hidden");
+          deleteButton.classList.add("hidden");
           showSnackbar("Book updated successfully!");
         } catch (error) {
           showSnackbar("Error updating book");
         }
       });
 }
+
+function deleteBook() {
+  const bookId = document.getElementById("updateBookId").innerText;
+  const title = document.getElementById("updateBookTitle").innerText;
+  const black = document.querySelector(".black");
+  const showBook = document.querySelector("#showBookProperties")
+  
+  axios.delete(`http://localhost:8001/books/${bookId}`)
+    .then(() => {
+      showSnackbar(`Book ${title} deleted successfully!`);
+      black.classList.add("hidden");
+      showBook.classList.add("hidden");
+    })
+    .catch((error) => {
+      showSnackbar(`There was an error deleting the book ${title}`);
+    });
+}
+
 
 function showSnackbar(message) {
   let snackbarMessage = document.getElementById('snackbar');

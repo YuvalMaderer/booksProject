@@ -12,6 +12,14 @@ document
           const categories = document.getElementById("createBookCategories").value;          
           const ISBN = document.getElementById("createBookISBN").value;
           const copies = parseInt(document.getElementById("createBookNumCopies").value);
+          if (pageCount < 1) {
+            showSnackbar('Page count must be greater than zero');
+            return;
+          }
+          if (copies < 0) {
+            showSnackbar('Number of copies must be positive');
+            return;
+          }
           try {
             if (!getAllBooksISBN(ISBN)) {
               showSnackbar(`Book ${title} Already Exists, Please Try Again!`)
