@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add a book</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="navBar">
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="addbook.html">Add book</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="favorites.html">Favorites</a></li>
+      </ul>
+    </nav>
+
+    <h2>Add New Book</h2>
+    <form id="createBookForm">
+      <input type="text" id="createBookTitle" placeholder="Title" required />
+      <input
+        type="text"
+        id="createBookAuthor"
+        placeholder="Authors (comma-separated)"
+        required
+      />
+      <input
+        type="number"
+        id="createBookNumPages"
+        placeholder="Number of Pages"
+        required
+      />
+      <input
+        type="text"
+        id="createBookDescription"
+        placeholder="Short Description"
+        required
+      />
+      <input type="url" id="createBookImage" placeholder="Image URL" required />
+      <input
+        type="text"
+        id="createBookCategories"
+        placeholder="Categories (comma-separated)"
+        required
+      />
+      <input type="text" id="createBookISBN" placeholder="ISBN" />
+      <input
+        type="number"
+        id="createBookNumCopies"
+        placeholder="Number of Copies"
+        required
+      />
+      <button type="submit">Add</button>
+      <div id="fetchedNewBook"></div>
+
+      <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+      <script src="/ajax_project/js/addbook.js"></script>
+    </form>
+  </body>
+</html>

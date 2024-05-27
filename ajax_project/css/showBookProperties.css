@@ -1,0 +1,36 @@
+.showBookProperties {
+    display: flex;
+    position: absolute;
+    top: 80px;
+    left: 27%;
+    flex-direction: column;
+    width: 700px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.topCard {
+    display: flex;
+}
+
+.topCard .close {
+    position: absolute;
+    left: 90%;
+    top: 3%;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+}
+
+.topCard .edit {
+    position: absolute;
+    left: 83%;
+    top: 3%;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+}

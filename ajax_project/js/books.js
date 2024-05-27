@@ -4,6 +4,7 @@ const displayBooksBySearch = document.getElementById("displayBooksBySearch");
 // const spinner = document.querySelector(".spinner");
 const prevPageButton = document.getElementById("prevPage");
 const nextPageButton = document.getElementById("nextPage");
+const pageNumberElement = document.getElementById("pageNumber");
 const booksPerPage = 9;
 let currentPage = 1;
 let totalBooks = 0;
@@ -71,6 +72,7 @@ function displayPage(books) {
 
   prevPageButton.classList.toggle("hidden", currentPage === 1);
   nextPageButton.classList.toggle("hidden", end >= totalBooks);
+  pageNumberElement.innerText = currentPage;
 }
 
 function changePage(direction) {
@@ -80,7 +82,7 @@ function changePage(direction) {
 }
 
 function openBookProperties() {
-  bookProperties.style.display = "block";
+  bookProperties.style.display = "block";
 }
 
 async function openBookProperties(svgElement) {
@@ -89,17 +91,69 @@ async function openBookProperties(svgElement) {
     black.classList.remove("hidden");
     const bookId = svgElement.querySelector("#bookId").outerText;
     const response = await axios.get(`${url}/${bookId}`)
-    console.log(response.data);
     showBook.innerHTML = `
-    <img src="${response.data.img}" alt="${response.data.title}">
+    <div class="topCard">
+
+      <img src="${response.data.img}" alt="${response.data.title}">
+      <button onclick="editBook(this)" class="edit" id="editButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+      <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+    </svg></button>
+      <button class="close" onClick="closeBook()"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+    </svg></button>
+
+    </div>
+
+    <label>Title: </label>
     <h2>${response.data.title}</h2>
-    <p>Author: ${response.data.author}</p>
-    <p>Description: ${response.data.description}</p>
-    <p>Categories: ${response.data.categories}</p>
-    <p>Page Count: ${response.data.pageCount}</p>
-    <p>ID: ${response.data.id}</p>
-    <p>ISBN: ${response.data.ISBN}</p>
-    <button>close</button>
+    <label>Author: </label>
+    <p>${response.data.author}</p>
+    <label>Description: </label>
+    <p>${response.data.description}</p>
+    <label>Categories: </label>
+    <p>${response.data.categories}</p>
+    <label>Page Count: </label>
+    <p>${response.data.pageCount}</p>
+    <label>ID: </label>
+    <p>${response.data.id}</p>
+    <label>ISBN: </label>
+    <p>${response.data.ISBN}</p>
+    <label>Copies: </label>
+    <p>${response.data.copies}</p>
     `
     showBook.classList.remove("hidden")
+}
+
+function closeBook() {
+  const black = document.querySelector(".black");
+  const showBook = document.querySelector("#showBookProperties")
+  black.classList.add("hidden");
+  showBook.classList.add("hidden");
+}
+
+function editBook(svgElement) {
+  // Select all paragraph elements inside foreignObject elements within svgElement
+  const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
+  const h2 = svgElement.parentNode.parentNode.querySelectorAll('h2');
+
+  paragraphs.forEach(paragraph => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = paragraph.textContent;
+    input.id = paragraph.id;
+    paragraph.parentNode.replaceChild(input, paragraph);
+  });
+
+  h2.forEach(h => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = h.textContent;
+    input.id = h.id;
+    h.parentNode.replaceChild(input, h);
+  });
+
+  const editButton = document.querySelector("#editButton");
+  if (editButton) {
+    editButton.classList.add("hidden");
+  }
 }

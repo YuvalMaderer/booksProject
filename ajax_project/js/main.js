@@ -1,4 +1,4 @@
-const itemsPerPage = 5;
+    const itemsPerPage = 5;
       let currentPage = 1;
       let totalItems = 0;
 
@@ -63,12 +63,21 @@ const itemsPerPage = 5;
           event.preventDefault();
           const title = document.getElementById("createBookTitle").value;
           const author = document.getElementById("createBookAuthor").value;
-          latestBookId++;
+          const numPages = document.getElementById("createBookNumPages").value;
+          const description = document.getElementById("createBookDescription").value;
+          const image = document.getElementById("createBookImage").value;          
+          const categories = document.getElementById("createBookCategories").value;          
+          const isbn = document.getElementById("createBookISBN").value;
           try {
             await axios.post("http://localhost:8001/books", {
-              id: latestBookId,
+              id,
               title,
               author,
+              numPages,
+              description,
+              image,
+              categories,
+              isbn
             });
             getAllBooks(currentPage);
           } catch (error) {
@@ -96,17 +105,27 @@ const itemsPerPage = 5;
           const bookId = document.getElementById("updateBookId").value;
           const title = document.getElementById("updateBookTitle").value;
           const author = document.getElementById("updateBookAuthor").value;
+          const numPages = document.getElementById("updateBookNumPages").value;
+          const description = document.getElementById("updateBookDescription").value;
+          const image = document.getElementById("updateBookImage").value;          
+          const categories = document.getElementById("updateBookCategories").value;          
+          const isbn = document.getElementById("updateBookISBN").value;
           try {
             await axios.put(`http://localhost:8001/books/${bookId}`, {
               title,
               author,
+              numPages,
+              description,
+              image,
+              categories,
+              isbn
             });
             getAllBooks(currentPage);
           } catch (error) {
             console.error("Error updating book:", error);
           }
         });
-
+      
         document.getElementById("displayBookDetailsForm").addEventListener("submit", async function (event) {
           event.preventDefault(); 
           const bookId = document.getElementById("displayBookDetails").value;
@@ -117,6 +136,8 @@ const itemsPerPage = 5;
             
           }
         })
+
+        
 
       getAllBooks(currentPage);
 
