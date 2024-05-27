@@ -1,50 +1,74 @@
+let snackbarTimeout
 
 document
         .getElementById("createBookForm")
         .addEventListener("submit", async function (event) {
           event.preventDefault();
-          const fetchedNewBook = document.getElementById("fetchedNewBook");
-          fetchedNewBook.innerHTML = '<div class="fetchedNewBook"></div>';
           const title = document.getElementById("createBookTitle").value;
           const author = document.getElementById("createBookAuthor").value;
-          const numPages = document.getElementById("createBookNumPages").valueAsNumber;
+          const pageCount = parseInt(document.getElementById("createBookNumPages").value);
           const description = document.getElementById("createBookDescription").value;
           const img = document.getElementById("createBookImage").value;          
           const categories = document.getElementById("createBookCategories").value;          
           const ISBN = document.getElementById("createBookISBN").value;
-          const copies = document.getElementById("createBookNumCopies").valueAsNumber;
+          const copies = parseInt(document.getElementById("createBookNumCopies").value);
           try {
-            if (getAllBooksISBN(ISBN)) {
-              fetchedNewBook.innerHTML += `<p>Book ${title} Already Exists, Please Try Again!</p>`;
+            if (!getAllBooksISBN(ISBN)) {
+              showSnackbar(`Book ${title} Already Exists, Please Try Again!`)
               return;
             }
             await axios.post("http://localhost:8001/books", {
               title,
               author: author.split(", "),
-              numPages,
+              pageCount,
               description,
               img,
               categories: categories.split(", "),
               ISBN,
               copies
             });
-            fetchedNewBook.innerHTML += `<p>Book ${title} Added Successfully</p>`;
-            // getAllBooks(currentPage);
+            showSnackbar(`Book ${title} Added Successfully`)
+            resetInputs()
           } catch (error) {
-            console.error("Error creating book:", error);
-            fetchedNewBook.innerHTML += `<p>Error Adding New Book ${title}</p>`;
+            showSnackbar(`Error Adding New Book ${title}`)
           }
         });
 
 async function getAllBooksISBN(isbn) {
-  const dataISBN = await axios.get("http://localhost:8001/books");
-  dataISBN.data.forEach(element => {
-    if(element.ISBN == isbn) {
-      return true;
-    }
-    return false;
-  });
-  
-}        
+  try {
+    const response = await axios.get("http://localhost:8001/books");
+    const books = response.data;
 
-getAllBooksISBN();
+    const exists = books.some(book => book.ISBN === isbn);
+
+    return exists;
+  } catch (error) {
+    console.error('Error fetching books:', error);
+    return false; 
+  }
+}
+
+function showSnackbar(message) {
+  let snackbarMessage = document.getElementById('snackbar');
+  snackbarMessage.innerText = message;
+  snackbarMessage.classList.remove('show');
+  void snackbarMessage.offsetWidth; 
+  snackbarMessage.classList.add('show');
+  if (snackbarTimeout) {
+      clearTimeout(snackbarTimeout);
+  }
+  snackbarTimeout = setTimeout(function() {
+      snackbarMessage.classList.remove("show");
+  }, 2400);
+}
+
+function resetInputs() {
+  document.getElementById("createBookTitle").value = "";
+  document.getElementById("createBookAuthor").value = "";
+  document.getElementById("createBookNumPages").value = "";
+  document.getElementById("createBookDescription").value = "";
+  document.getElementById("createBookImage").value = "";          
+  document.getElementById("createBookCategories").value = "";          
+  document.getElementById("createBookISBN").value = "";
+  document.getElementById("createBookNumCopies").value = "";
+}

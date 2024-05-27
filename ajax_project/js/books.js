@@ -8,6 +8,7 @@ const pageNumberElement = document.getElementById("pageNumber");
 const booksPerPage = 9;
 let currentPage = 1;
 let totalBooks = 0;
+let snackbarTimeout
 
 document
   .getElementById("searchBookByStr")
@@ -94,7 +95,7 @@ async function openBookProperties(svgElement) {
     showBook.innerHTML = `
     <div class="topCard">
 
-      <img src="${response.data.img}" alt="${response.data.title}">
+      <img id="image" src="${response.data.img}" alt="${response.data.title}">
       <button onclick="editBook(this)" class="edit" id="editButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
       <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
     </svg></button>
@@ -103,27 +104,29 @@ async function openBookProperties(svgElement) {
     </svg></button>
 
     </div>
-
+    <form id="updateBookForm">
     <label>Title: </label>
-    <h2>${response.data.title}</h2>
+    <h2 id="updateBookTitle">${response.data.title}</h2>
     <label>Author: </label>
-    <p>${response.data.author}</p>
+    <p id="updateBookAuthor">${response.data.author}</p>
     <label>Description: </label>
-    <p>${response.data.description}</p>
+    <p id="updateBookDescription">${response.data.description}</p>
     <label>Categories: </label>
-    <p>${response.data.categories}</p>
+    <p id="updateBookCategories">${response.data.categories}</p>
     <label>Page Count: </label>
-    <p>${response.data.pageCount}</p>
+    <p id="updateBookNumPages">${response.data.pageCount}</p>
     <label>ID: </label>
-    <p>${response.data.id}</p>
+    <p id="updateBookId">${response.data.id}</p>
     <label>ISBN: </label>
-    <p>${response.data.ISBN}</p>
+    <p id="updateBookISBN">${response.data.ISBN}</p>
     <label>Copies: </label>
-    <p>${response.data.copies}</p>
+    <p id="updateBookNumCopies">${response.data.copies}</p>
+    <button type="submit" onClick="updateBook()" class="save hidden" id="save">Save</button>
+    </form>
     `
     showBook.classList.remove("hidden")
 }
-
+ 
 function closeBook() {
   const black = document.querySelector(".black");
   const showBook = document.querySelector("#showBookProperties")
@@ -135,18 +138,30 @@ function editBook(svgElement) {
   // Select all paragraph elements inside foreignObject elements within svgElement
   const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
   const h2 = svgElement.parentNode.parentNode.querySelectorAll('h2');
+  const saveButton = document.getElementById("save");
 
   paragraphs.forEach(paragraph => {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = paragraph.textContent;
-    input.id = paragraph.id;
-    paragraph.parentNode.replaceChild(input, paragraph);
+    if (paragraph.id === "updateBookId") {
+      const p = document.createElement("p");
+      p.textContent = paragraph.textContent;
+      p.id = paragraph.id;
+      p.setAttribute('required', '');
+      paragraph.parentNode.replaceChild(p, paragraph);
+    } else {
+      const input = document.createElement('input');
+      input.setAttribute('required', '');
+      input.type = 'text';
+      input.value = paragraph.textContent;
+      input.id = paragraph.id;
+      paragraph.parentNode.replaceChild(input, paragraph);
+    }
+
   });
 
   h2.forEach(h => {
     const input = document.createElement('input');
     input.type = 'text';
+    input.setAttribute('required', '');
     input.value = h.textContent;
     input.id = h.id;
     h.parentNode.replaceChild(input, h);
@@ -155,5 +170,53 @@ function editBook(svgElement) {
   const editButton = document.querySelector("#editButton");
   if (editButton) {
     editButton.classList.add("hidden");
+    saveButton.classList.remove("hidden");
   }
 }
+
+function updateBook() {
+  document
+      .getElementById("updateBookForm")
+      .addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const bookId = document.getElementById("updateBookId").innerText;
+        const img = document.getElementById("image").src;
+        const title = document.getElementById("updateBookTitle").value;
+        const author = document.getElementById("updateBookAuthor").value;
+        const numPages = parseInt(document.getElementById("updateBookNumPages").value);
+        const description = document.getElementById("updateBookDescription").value;
+        const categories = document.getElementById("updateBookCategories").value;          
+        const ISBN = document.getElementById("updateBookISBN").value;
+        const copies = parseInt(document.getElementById("updateBookNumCopies").value);
+        try {
+          await axios.put(`http://localhost:8001/books/${bookId}`, {
+            title,
+            author: author.split(", "),
+            numPages,
+            description,
+            img,
+            categories: categories.split(", "),
+            ISBN,
+            copies
+          });
+          showSnackbar("Book updated successfully!");
+        } catch (error) {
+          showSnackbar("Error updating book");
+        }
+      });
+}
+
+function showSnackbar(message) {
+  let snackbarMessage = document.getElementById('snackbar');
+  snackbarMessage.innerText = message;
+  snackbarMessage.classList.remove('show');
+  void snackbarMessage.offsetWidth; 
+  snackbarMessage.classList.add('show');
+  if (snackbarTimeout) {
+      clearTimeout(snackbarTimeout);
+  }
+  snackbarTimeout = setTimeout(function() {
+      snackbarMessage.classList.remove("show");
+  }, 2400);
+}
+
