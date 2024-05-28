@@ -104,7 +104,7 @@ async function openBookProperties(svgElement) {
     </div>
     <form id="updateBookForm">
     <label>Title: </label>
-    <p id="updateBookTitle">${response.data.title}</p>
+    <p id="updateBookTitle" class="updateBookTitle">${response.data.title}</p>
     <label>Author: </label>
     <p id="updateBookAuthor">${response.data.author}</p>
     <label>Description: </label>
@@ -119,8 +119,11 @@ async function openBookProperties(svgElement) {
     <p id="updateBookISBN">${response.data.ISBN}</p>
     <label>Copies: </label>
     <p id="updateBookNumCopies">${response.data.copies}</p>
-    <button type="submit" onClick="updateBook(this)" class="save hidden" id="save">Save</button>
-    <button type="button" onClick="deleteBook()" class="delete hidden" id="delete">Delete</button>
+    <div class="button-group hidden" id="button-group">
+      <button type="submit" onClick="updateBook(this)" class="save" id="save">Save Changes</button>
+      <button type="button" onClick="deleteBook()" class="delete" id="delete">Delete Book</button>
+    </div>
+    
     </form>
     `
     showBook.classList.remove("hidden")
@@ -134,10 +137,8 @@ function closeBook() {
 }
 
 function editBook(svgElement) {
-  // Select all paragraph elements inside foreignObject elements within svgElement
   const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
-  const saveButton = document.getElementById("save");
-  const deleteButton = document.getElementById("delete");
+  const saveDeleteButtons = document.getElementById('button-group');
 
   paragraphs.forEach(paragraph => {
     if (paragraph.id === "updateBookId") {
@@ -160,8 +161,7 @@ function editBook(svgElement) {
   const editButton = document.querySelector("#editButton");
   if (editButton) {
     editButton.classList.add("hidden");
-    saveButton.classList.remove("hidden");
-    deleteButton.classList.remove("hidden");
+    saveDeleteButtons.classList.remove("hidden");
   }
 }
 
@@ -169,21 +169,19 @@ function updateBook(svgElement) {
   document
       .getElementById("updateBookForm")
       .addEventListener("submit", async function (event) {
-        console.log(event)
         event.preventDefault();
         const bookId = document.getElementById("updateBookId").innerText;
         const img = document.getElementById("image").src;
         const title = document.getElementById("updateBookTitle").value;
         const author = document.getElementById("updateBookAuthor").value;
-        const numPages = parseInt(document.getElementById("updateBookNumPages").value);
+        const pageCount = parseInt(document.getElementById("updateBookNumPages").value);
         const description = document.getElementById("updateBookDescription").value;
         const categories = document.getElementById("updateBookCategories").value;          
         const ISBN = document.getElementById("updateBookISBN").value;
         const copies = parseInt(document.getElementById("updateBookNumCopies").value);
-        const inputs = svgElement.parentNode.querySelectorAll('input[type="text"]');
+        const inputs = svgElement.parentNode.parentNode.querySelectorAll('input');
         const editButton = document.querySelector("#editButton");
-        const saveButton = document.getElementById("save");
-        const deleteButton = document.getElementById("delete");
+        const saveDeleteButtons = document.getElementById('button-group');
         if (numPages < 1) {
           showSnackbar('Page count must be greater than zero');
           return;
@@ -196,7 +194,7 @@ function updateBook(svgElement) {
           await axios.put(`http://localhost:8001/books/${bookId}`, {
             title,
             author: author.split(", "),
-            numPages,
+            pageCount,
             description,
             img,
             categories: categories.split(", "),
@@ -210,8 +208,7 @@ function updateBook(svgElement) {
             input.parentNode.replaceChild(paragraph, input);
           });
           editButton.classList.remove("hidden");
-          saveButton.classList.add("hidden");
-          deleteButton.classList.add("hidden");
+          saveDeleteButtons.classList.add("hidden");
           showSnackbar("Book updated and History item added successfully!");
           addToHistory("update",bookId);
         } catch (error) {
@@ -263,7 +260,6 @@ async function addToHistory(oper, bID) {
   };
   try {
     await saveToHistory(historyItem);
-    createTable(); 
   } catch (error) {
     showSnackbar('Error adding history item');
   }
@@ -271,27 +267,8 @@ async function addToHistory(oper, bID) {
 
 async function saveToHistory(historyItem) {
   try {
-    return await axios.post('http://localhost:8001/history', historyItem);
+    await axios.post('http://localhost:8001/history', historyItem);
   } catch (error) {
     showSnackbar('Error saving history item:');
-  }
-}
-
-async function createTable() {
-  const table = document.getElementById("operations");
-  table.innerHTML = '';
-  try {
-    const response = await axios.get("http://localhost:8001/history");
-    response.data.forEach(item => {
-      table.innerHTML += `
-        <tr>
-          <td>${item.id}</td>
-          <td>${item.operation}</td>
-          <td>${item.time}</td>
-          <td>${item.bookId}</td>
-        </tr>`;
-    });
-  } catch (error) {
-    showSnackbar('Error fetching history items');
   }
 }

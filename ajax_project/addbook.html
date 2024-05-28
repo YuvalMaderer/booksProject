@@ -17,9 +17,9 @@
         <li><a href="favorites.html">Favorites</a></li>
       </ul>
     </nav>
-
-    <h2>Add New Book</h2>
-    <form id="createBookForm">
+    <div class="container">
+      <h2 class="addNewBook">Add New Book</h2>
+    <form id="createBookForm" class="createBookForm">
       <input type="text" id="createBookTitle" placeholder="Title" required />
       <input
         type="text"
@@ -53,10 +53,12 @@
         placeholder="Number of Copies"
         required
       />
-      <button type="submit">Add</button>
+      <button type="submit" class="addButton">Add</button>
 
       <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
       <script src="/ajax_project/js/addbook.js"></script>
+    </div>
+    
     </form>
   </body>
 </html>

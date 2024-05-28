@@ -8,7 +8,6 @@ async function addToHistory(oper, bID) {
   };
   try {
     await saveToHistory(historyItem);
-    // showSnackbar('History item added successfully.');
     createTable(); 
   } catch (error) {
     showSnackbar('Error adding history item');
@@ -17,7 +16,7 @@ async function addToHistory(oper, bID) {
 
 async function saveToHistory(historyItem) {
   try {
-    return await axios.post('http://localhost:8001/history', historyItem);
+    await axios.post('http://localhost:8001/history', historyItem);
   } catch (error) {
     showSnackbar('Error saving history item:');
   }

@@ -36,7 +36,7 @@ document
               copies
             });
             addToHistory("create", ISBN);
-            showSnackbar(`Book ${title} Added Successfully
+            showSnackbar(`Book ${title} Added and 
             History Updated Successfully`)
             resetInputs()
           } catch (error) {
@@ -91,8 +91,6 @@ async function addToHistory(oper, bID) {
   };
   try {
     await saveToHistory(historyItem);
-    // showSnackbar('History item added successfully.');
-    createTable(); 
   } catch (error) {
     showSnackbar('Error adding history item');
   }
@@ -100,28 +98,9 @@ async function addToHistory(oper, bID) {
 
 async function saveToHistory(historyItem) {
   try {
-    return await axios.post('http://localhost:8001/history', historyItem);
+    await axios.post('http://localhost:8001/history', historyItem);
   } catch (error) {
     showSnackbar('Error saving history item:');
-  }
-}
-
-async function createTable() {
-  const table = document.getElementById("operations");
-  table.innerHTML = '';
-  try {
-    const response = await axios.get("http://localhost:8001/history");
-    response.data.forEach(item => {
-      table.innerHTML += `
-        <tr>
-          <td>${item.id}</td>
-          <td>${item.operation}</td>
-          <td>${item.time}</td>
-          <td>${item.bookId}</td>
-        </tr>`;
-    });
-  } catch (error) {
-    showSnackbar('Error fetching history items');
   }
 }
 

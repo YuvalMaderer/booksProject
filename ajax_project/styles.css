@@ -5,6 +5,7 @@
 @import url(/ajax_project/css/showBookProperties.css);
 @import url(/ajax_project/css/snackbar.css);
 @import url(/ajax_project/css/pagination.css);
+@import url(/ajax_project/css/addNewBook.css);
 
 :root {
   --light-yellow: #FFFAE6;
@@ -17,7 +18,7 @@ body {
   height: 100vh;
   margin: 0;
   background-color: var(--light-orange);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .hidden {
