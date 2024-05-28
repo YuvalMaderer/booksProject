@@ -46,7 +46,7 @@ svg {
 
 .searchButton {
     border: none;
-    background-color: var(--light-orange);
+    background-color: transparent;
     cursor: pointer;
 }
 

@@ -10,7 +10,7 @@
     border-radius: 10px;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 998;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
@@ -67,6 +67,21 @@ label {
 }
 
 .topCard .edit:hover {
+    bottom: 100%;
+}
+
+.topCard .favorites {
+    position: absolute;
+    bottom: 93%;
+    transition: 0.1s;
+    left: 76%;
+    top: 3%;
+    border: none;
+    background-color: var(--light-yellow);
+    cursor: pointer;
+}
+
+.topCard .favorites:hover {
     bottom: 100%;
 }
 

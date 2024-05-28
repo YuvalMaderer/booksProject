@@ -21,7 +21,7 @@ document
             return;
           }
           try {
-            if (!getAllBooksISBN(ISBN)) {
+            if (getAllBooksISBN(ISBN)) {
               showSnackbar(`Book ${title} Already Exists, Please Try Again!`)
               return;
             }

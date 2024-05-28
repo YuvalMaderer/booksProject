@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BOOKYP</title>
+    <title>Home</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,11 +12,13 @@
     <div class="black hidden" onclick="closeBook()"></div>
 
     <nav class="navBar">
-      <ul>
-        <li><a href="home.html">Home</a></li>
-        <li><a href="addbook.html">Add book</a></li>
-        <li><a href="history.html">History</a></li>
-        <li><a href="favorites.html">Favorites</a></li>
+      <ul class="menuItems">
+        <li><a href="home.html" data-item="Home">Home</a></li>
+        <li><a href="addbook.html" data-item="Add">Add</a></li>
+        <li>
+          <a href="history.html" data-item="History">History</a>
+        </li>
+        <li><a href="favorites.html" data-item="Favorites">Favorites</a></li>
       </ul>
     </nav>
 
@@ -82,7 +84,6 @@
     </div>
 
     <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
-    <script src="/ajax_project/js/books.js"></script>
-    <script src="/ajax_project/js/home.js"></script>
+    <script src="/ajax_project/js/manageBooks.js"></script>
   </body>
 </html>

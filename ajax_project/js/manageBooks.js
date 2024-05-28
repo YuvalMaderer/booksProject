@@ -10,6 +10,7 @@ let currentPage = 1;
 let totalBooks = 0;
 let snackbarTimeout
 const spinner = document.getElementById("spinner");
+const black = document.querySelector(".black");
 
 document
   .getElementById("searchBookByStr")
@@ -34,6 +35,7 @@ async function searchBooks(query) {
     const filteredBooks = response.data.filter((book) =>
       book.title.toLowerCase().includes(query.toLowerCase())
     );
+    filteredBooks.sort((a, b) => a.title.localeCompare(b.title));
     totalBooks = filteredBooks.length;
 
     if (totalBooks === 0) {
@@ -94,6 +96,9 @@ async function openBookProperties(svgElement) {
     <div class="topCard">
 
       <img id="image" src="${response.data.img}" alt="${response.data.title}">
+    <button onclick="addToFavorites(this)" class="favorites" id="favoritesButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+  </svg></button>
       <button onclick="editBook(this)" class="edit" id="editButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
       <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
     </svg></button>
@@ -139,6 +144,7 @@ function closeBook() {
 function editBook(svgElement) {
   const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
   const saveDeleteButtons = document.getElementById('button-group');
+  const favButton = document.getElementById('favoritesButton')
 
   paragraphs.forEach(paragraph => {
     if (paragraph.id === "updateBookId") {
@@ -161,6 +167,7 @@ function editBook(svgElement) {
   const editButton = document.querySelector("#editButton");
   if (editButton) {
     editButton.classList.add("hidden");
+    favButton.classList.add("hidden");
     saveDeleteButtons.classList.remove("hidden");
   }
 }
@@ -182,7 +189,8 @@ function updateBook(svgElement) {
         const inputs = svgElement.parentNode.parentNode.querySelectorAll('input');
         const editButton = document.querySelector("#editButton");
         const saveDeleteButtons = document.getElementById('button-group');
-        if (numPages < 1) {
+        const favButton = document.getElementById('favoritesButton')
+        if (pageCount < 1) {
           showSnackbar('Page count must be greater than zero');
           return;
         }
@@ -208,6 +216,7 @@ function updateBook(svgElement) {
             input.parentNode.replaceChild(paragraph, input);
           });
           editButton.classList.remove("hidden");
+          favButton.classList.remove("hidden");
           saveDeleteButtons.classList.add("hidden");
           showSnackbar("Book updated and History item added successfully!");
           addToHistory("update",bookId);
@@ -271,4 +280,66 @@ async function saveToHistory(historyItem) {
   } catch (error) {
     showSnackbar('Error saving history item:');
   }
+}
+
+async function addToFavorites(svgElement) {
+  const card = svgElement.parentNode.parentNode
+  const topCard = svgElement.parentNode
+  const properties = card.querySelector("#updateBookForm")
+  const title = properties.querySelector("#updateBookTitle").innerText
+  const author = properties.querySelector("#updateBookAuthor").innerText
+  const description = properties.querySelector("#updateBookDescription").innerText
+  const img = topCard.querySelector("#image").src
+  const categories = properties.querySelector("#updateBookCategories").innerText
+  const pageCount = properties.querySelector("#updateBookNumPages").innerText
+  const ID = properties.querySelector("#updateBookId").innerText
+  const ISBN = properties.querySelector("#updateBookISBN").innerText
+  const copies = properties.querySelector("#updateBookNumCopies").innerText
+  try {
+  await axios.post("http://localhost:8001/favorites", {
+              id: ID,
+              title,
+              author: author.split(", "),
+              pageCount,
+              description,
+              img,
+              categories: categories.split(", "),
+              ISBN,
+              copies
+            });
+            showSnackbar(`Book ${title} added to favorites successfully!`);
+            svgElement.parentNode.innerHTML = `<img id="image" src="${img}" alt="${title}">
+            <button onclick="removeFromFavorites(this)" class="favorites" id="favoritesButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+          </svg></button>
+          <button onclick="editBook(this)" class="edit" id="editButton"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+          <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+        </svg></button>
+              <button class="close" onClick="closeBook()"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg></button>`
+          } catch (error) {
+            console.log(error)
+            showSnackbar(`Error Adding New Book ${title} to favorites`)
+          }
+}
+
+async function removeFromFavorites(svgElement) {
+  const card = svgElement.parentNode.parentNode
+  const properties = card.querySelector("#updateBookForm")
+  const ID = properties.querySelector("#updateBookId").innerText
+  console.log(ID)
+  const title = properties.querySelector("#updateBookTitle").innerText
+  try {
+  await axios.delete(`http://localhost:8001/favorites/${ID}`);
+            showSnackbar(`Book ${title} remove from favorites successfully!`);
+          } catch (error) {
+            console.log(error)
+            showSnackbar(`Error removing Book ${title} to favorites`)
+          } finally {
+              card.classList.add("hidden")
+              black.classList.add("hidden")
+          }
+
+          
 }
