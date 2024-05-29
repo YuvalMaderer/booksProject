@@ -21,6 +21,8 @@ body {
   background: rgb(231,203,94);
   background: linear-gradient(90deg, rgba(231,203,94,1) 0%, rgba(255,159,102,0.7820378151260504) 53%, rgba(255,95,0,1) 100%);
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  min-width: 445px;
+
 }
 
 .hidden {
@@ -35,8 +37,10 @@ body {
 .black {
   background-color: black;
   z-index: 800;
-  position: absolute;
+  position: fixed; 
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 180%;
+  height: 100vh; 
   opacity: 40%;
 }

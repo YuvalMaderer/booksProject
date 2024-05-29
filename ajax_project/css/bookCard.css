@@ -10,7 +10,8 @@
     position: relative;
     bottom: 0;
     transition: 0.1s;
-    background-color: var(--light-yellow);
+    background: rgb(255,95,0);
+    background: linear-gradient(90deg, rgba(255,95,0,1) 0%, rgba(255,159,102,0.8800770308123249) 43%, rgba(231,203,94,1) 100%);
     color: var(--blue);
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     text-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
@@ -19,6 +20,7 @@
     height: 200px;
     padding: 10px;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .bookCard:hover {

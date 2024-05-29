@@ -8,8 +8,7 @@
   </head>
   <body>
     <div id="snackbar"></div>
-
-    <nav class="navBar">
+       <nav class="navBar">
       <ul>
         <li><a href="home.html">Home</a></li>
         <li><a href="addbook.html">Add book</a></li>
@@ -17,8 +16,10 @@
         <li><a href="favorites.html">Favorites</a></li>
       </ul>
     </nav>
+    <div class="div-container">
+   
     <div class="container">
-      <h2 class="addNewBook">Add New Book</h2>
+      <h2 class="addNewBook">Add New Book Manually</h2>
     <form id="createBookForm" class="createBookForm">
       <input type="text" id="createBookTitle" placeholder="Title" required />
       <input
@@ -60,5 +61,16 @@
     </div>
     
     </form>
+    <div class="righ">
+      <h2 class="addNewBook">Add New Book By ISBN</h2>
+      <form action="" class="createBookForm">
+        <input type="text" id="createBookISBN" placeholder="ISBN" />
+      </form>
+      
+    </div>
+    </div>
+
+    
+
   </body>
 </html>

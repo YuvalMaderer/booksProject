@@ -21,7 +21,7 @@ document
             return;
           }
           try {
-            if (getAllBooksISBN(ISBN)) {
+            if (await getAllBooksISBN(ISBN)) {
               showSnackbar(`Book ${title} Already Exists, Please Try Again!`)
               return;
             }
@@ -40,7 +40,6 @@ document
             History Updated Successfully`)
             resetInputs()
           } catch (error) {
-            console.error(error)
             showSnackbar(`Error Adding New Book ${title}`)
           }
         });

@@ -1,11 +1,13 @@
 .showBookProperties {
+    transition: 0.1s;
     display: flex;
     position: absolute;
     top: 80px;
-    left: 27%;
+    left: 23%;
     flex-direction: column;
     width: 800px;
-    background-color: var(--light-yellow);
+    background: rgb(255,194,157);
+    background: linear-gradient(90deg, rgba(255,194,157,1) 0%, rgba(255,148,85,0.9417016806722689) 52%, rgba(231,203,94,1) 100%);
     padding: 10px;
     border-radius: 10px;
     justify-content: center;
@@ -40,7 +42,7 @@
     left: 90%;
     top: 3%;
     border: none;
-    background-color: var(--light-yellow);
+    background-color: transparent;
     cursor: pointer;
     transition: 0.1s;
 }
@@ -62,7 +64,7 @@ label {
     left: 83%;
     top: 3%;
     border: none;
-    background-color: var(--light-yellow);
+    background-color: transparent;
     cursor: pointer;
 }
 
@@ -77,7 +79,7 @@ label {
     left: 76%;
     top: 3%;
     border: none;
-    background-color: var(--light-yellow);
+    background-color: transparent;
     cursor: pointer;
 }
 
@@ -151,4 +153,52 @@ label {
 
 .button-group .save:active, .button-group .delete:active {
   transform: scale(0.95);
+}
+
+.topCard .fav {
+    position: absolute;
+    bottom: 93%;
+    transition: 0.1s;
+    left: 83%;
+    top: 3%;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 1160px) {
+    .showBookProperties {
+        width: 400px;
+    }
+    #updateBookForm input {
+        width: 350px;
+    }
+    .topCard .close {
+        left: 85%;
+    }
+    .topCard .edit {
+        left: 76%;
+    }
+    .topCard .favorites {
+        left: 67%;
+    }
+}
+
+@media only screen and (max-width: 620px) {
+    .showBookProperties {
+        width: 350px;
+        left: 12%;
+    }
+    #updateBookForm input {
+        width: 300px;
+    }
+    .topCard .close {
+        left: 85%;
+    }
+    .topCard .edit {
+        left: 76%;
+    }
+    .topCard .favorites {
+        left: 67%;
+    }
 }
