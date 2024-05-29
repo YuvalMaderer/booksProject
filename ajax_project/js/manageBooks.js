@@ -1,25 +1,31 @@
+
 const url = "http://localhost:8001/books";
-const bookProperties = document.getElementById("popupBook");
 const displayBooksBySearch = document.getElementById("displayBooksBySearch");
-// const spinner = document.querySelector(".spinner");
 const prevPageButton = document.getElementById("prevPage");
 const nextPageButton = document.getElementById("nextPage");
 const pageNumberElement = document.getElementById("pageNumber");
+const showCategories = document.querySelector(".showCategories");
+const categoryFilter = document.getElementById("categoryFilter");
 const booksPerPage = 9;
 let currentPage = 1;
 let totalBooks = 0;
-let snackbarTimeout
+let allBooks = [];
 const spinner = document.getElementById("spinner");
-const black = document.querySelector(".black");
 
 document
   .getElementById("searchBookByStr")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
-    currentPage = 1; 
+    currentPage = 1;
     const input = document.getElementById("searchInput").value;
     await searchBooks(input);
   });
+
+categoryFilter.addEventListener("change", () => {
+  currentPage = 1;
+  const selectedCategory = categoryFilter.value;
+  filterBooks(selectedCategory);
+});
 
 prevPageButton.addEventListener("click", () => changePage(-1));
 nextPageButton.addEventListener("click", () => changePage(1));
@@ -27,29 +33,38 @@ nextPageButton.addEventListener("click", () => changePage(1));
 async function searchBooks(query) {
   spinner.classList.remove("hidden");
   displayBooksBySearch.innerHTML = "";
-  //   spinner.classList.remove("hidden");
   displayBooksBySearch.classList.add("hidden");
 
   try {
     const response = await axios.get(url);
-    const filteredBooks = response.data.filter((book) =>
+    allBooks = response.data.filter((book) =>
       book.title.toLowerCase().includes(query.toLowerCase())
     );
-    filteredBooks.sort((a, b) => a.title.localeCompare(b.title));
-    totalBooks = filteredBooks.length;
+    allBooks.sort((a, b) => a.title.localeCompare(b.title));
+    totalBooks = allBooks.length;
+    showCategories.classList.remove("hidden");
 
     if (totalBooks === 0) {
-      showSnackbar("No books found")
+      showSnackbar("No books found");
       spinner.classList.add("hidden");
+      showCategories.classList.add("hidden");
     } else {
-      displayPage(filteredBooks);
+      filterBooks(categoryFilter.value);
     }
   } catch (error) {
-      showSnackbar("Error fetching books")
-      spinner.classList.add("hidden");
+    showSnackbar("Error fetching books");
+    spinner.classList.add("hidden");
   } finally {
     displayBooksBySearch.classList.remove("hidden");
   }
+}
+
+function filterBooks(category) {
+  const filteredBooks = allBooks.filter(
+    (book) => category === "" || book.categories.join(", ") === category
+  );
+  totalBooks = filteredBooks.length;
+  displayPage(filteredBooks);
 }
 
 function displayPage(books) {
@@ -64,13 +79,20 @@ function displayPage(books) {
             <span class="hidden" id="bookId">${book.id}</span>
           <img src="${book.img}" alt="${book.title}">
           <div class="bookProperties">
-              <h2>${(book.title).slice(0, 40) + (book.title.length > 40 ? "..." : "")}</h2>
-              <p>Author: ${(book.author).slice(0, 10) + (book.author.length > 10 ? "..." : "")}</p>
-              <p>Description: ${(book.description).slice(0, 250) + (book.description.length > 250 ? "..." : "")}</p>
+              <h2>${
+                book.title.slice(0, 40) + (book.title.length > 40 ? "..." : "")
+              }</h2>
+              <p>Author: ${
+                book.author.slice(0, 10) +
+                (book.author.length > 10 ? "..." : "")
+              }</p>
+              <p>Description: ${
+                book.description.slice(0, 250) +
+                (book.description.length > 250 ? "..." : "")
+              }</p>
           </div>
       </div>
     `
-
     )
     .join("");
 
@@ -82,17 +104,30 @@ function displayPage(books) {
 
 function changePage(direction) {
   currentPage += direction;
-  const input = document.getElementById("searchInput").value;
-  searchBooks(input);
+  filterBooks(categoryFilter.value);
+}
+
+function showSnackbar(message) {
+  const snackbarMessage = document.getElementById("snackbar");
+  snackbarMessage.innerText = message;
+  snackbarMessage.classList.remove("show");
+  void snackbarMessage.offsetWidth;
+  snackbarMessage.classList.add("show");
+  if (snackbarTimeout) {
+    clearTimeout(snackbarTimeout);
+  }
+  snackbarTimeout = setTimeout(() => {
+    snackbarMessage.classList.remove("show");
+  }, 2400);
 }
 
 async function openBookProperties(svgElement) {
-    const black = document.querySelector(".black");
-    const showBook = document.querySelector("#showBookProperties")
-    black.classList.remove("hidden");
-    const bookId = svgElement.querySelector("#bookId").outerText;
-    const response = await axios.get(`${url}/${bookId}`)
-    showBook.innerHTML = `
+  const black = document.querySelector(".black");
+  const showBook = document.querySelector("#showBookProperties");
+  black.classList.remove("hidden");
+  const bookId = svgElement.querySelector("#bookId").outerText;
+  const response = await axios.get(`${url}/${bookId}`);
+  showBook.innerHTML = `
     <div class="topCard">
 
       <img id="image" src="${response.data.img}" alt="${response.data.title}">
@@ -130,39 +165,38 @@ async function openBookProperties(svgElement) {
     </div>
     
     </form>
-    `
-    showBook.classList.remove("hidden")
-    document.documentElement.scrollTop = 0;
+    `;
+  showBook.classList.remove("hidden");
+  document.documentElement.scrollTop = 0;
 }
- 
+
 function closeBook() {
   const black = document.querySelector(".black");
-  const showBook = document.querySelector("#showBookProperties")
+  const showBook = document.querySelector("#showBookProperties");
   black.classList.add("hidden");
   showBook.classList.add("hidden");
 }
 
 function editBook(svgElement) {
-  const paragraphs = svgElement.parentNode.parentNode.querySelectorAll('p');
-  const saveDeleteButtons = document.getElementById('button-group');
-  const favButton = document.getElementById('favoritesButton')
+  const paragraphs = svgElement.parentNode.parentNode.querySelectorAll("p");
+  const saveDeleteButtons = document.getElementById("button-group");
+  const favButton = document.getElementById("favoritesButton");
 
-  paragraphs.forEach(paragraph => {
+  paragraphs.forEach((paragraph) => {
     if (paragraph.id === "updateBookId") {
       const p = document.createElement("p");
       p.textContent = paragraph.textContent;
       p.id = paragraph.id;
-      p.setAttribute('required', '');
+      p.setAttribute("required", "");
       paragraph.parentNode.replaceChild(p, paragraph);
     } else {
-      const input = document.createElement('input');
-      input.setAttribute('required', '');
-      input.type = 'text';
+      const input = document.createElement("input");
+      input.setAttribute("required", "");
+      input.type = "text";
       input.value = paragraph.textContent;
       input.id = paragraph.id;
       paragraph.parentNode.replaceChild(input, paragraph);
     }
-
   });
 
   const editButton = document.querySelector("#editButton");
@@ -175,68 +209,77 @@ function editBook(svgElement) {
 
 function updateBook(svgElement) {
   document
-      .getElementById("updateBookForm")
-      .addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const bookId = document.getElementById("updateBookId").innerText;
-        const img = document.getElementById("image").src;
-        const title = document.getElementById("updateBookTitle").value;
-        const author = document.getElementById("updateBookAuthor").value;
-        const pageCount = parseInt(document.getElementById("updateBookNumPages").value);
-        const description = document.getElementById("updateBookDescription").value;
-        const categories = document.getElementById("updateBookCategories").value;          
-        const ISBN = document.getElementById("updateBookISBN").value;
-        const copies = parseInt(document.getElementById("updateBookNumCopies").value);
-        const inputs = svgElement.parentNode.parentNode.querySelectorAll('input');
-        const editButton = document.querySelector("#editButton");
-        const saveDeleteButtons = document.getElementById('button-group');
-        const favButton = document.getElementById('favoritesButton')
-        if (pageCount < 1) {
-          showSnackbar('Page count must be greater than zero');
-          return;
-        }
-        if (copies < 0) {
-          showSnackbar('Number of copies must be positive');
-          return;
-        }
-        try {
-          await axios.put(`http://localhost:8001/books/${bookId}`, {
-            title,
-            author: author.split(", "),
-            pageCount,
-            description,
-            img,
-            categories: categories.split(", "),
-            ISBN,
-            copies
-          });
-          inputs.forEach(input => {
-            const paragraph = document.createElement('p');
-            paragraph.textContent = input.value;
-            paragraph.id = input.id;
-            input.parentNode.replaceChild(paragraph, input);
-          });
-          editButton.classList.remove("hidden");
-          favButton.classList.remove("hidden");
-          saveDeleteButtons.classList.add("hidden");
-          showSnackbar("Book updated and History item added successfully!");
-          addToHistory("update",bookId);
-        } catch (error) {
-          showSnackbar("Error updating book");
-        }
-      });
+    .getElementById("updateBookForm")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const bookId = document.getElementById("updateBookId").innerText;
+      const img = document.getElementById("image").src;
+      const title = document.getElementById("updateBookTitle").value;
+      const author = document.getElementById("updateBookAuthor").value;
+      const pageCount = parseInt(
+        document.getElementById("updateBookNumPages").value
+      );
+      const description = document.getElementById(
+        "updateBookDescription"
+      ).value;
+      const categories = document.getElementById("updateBookCategories").value;
+      const ISBN = document.getElementById("updateBookISBN").value;
+      const copies = parseInt(
+        document.getElementById("updateBookNumCopies").value
+      );
+      const inputs = svgElement.parentNode.parentNode.querySelectorAll("input");
+      const editButton = document.querySelector("#editButton");
+      const saveDeleteButtons = document.getElementById("button-group");
+      const favButton = document.getElementById("favoritesButton");
+      if (pageCount < 1) {
+        showSnackbar("Page count must be greater than zero");
+        return;
+      }
+      if (copies < 0) {
+        showSnackbar("Number of copies must be positive");
+        return;
+      }
+      try {
+        await axios.put(`http://localhost:8001/books/${bookId}`, {
+          title,
+          author: author.split(", "),
+          pageCount,
+          description,
+          img,
+          categories: categories.split(", "),
+          ISBN,
+          copies,
+        });
+        inputs.forEach((input) => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = input.value;
+          paragraph.id = input.id;
+          input.parentNode.replaceChild(paragraph, input);
+        });
+        editButton.classList.remove("hidden");
+        favButton.classList.remove("hidden");
+        saveDeleteButtons.classList.add("hidden");
+        showSnackbar("Book updated and History item added successfully!");
+        addToHistory("update", bookId);
+      } catch (error) {
+        showSnackbar("Error updating book");
+      }
+    });
 }
 
 function deleteBook() {
   const bookId = document.getElementById("updateBookId").innerText;
   const title = document.getElementById("updateBookTitle").innerText;
   const black = document.querySelector(".black");
-  const showBook = document.querySelector("#showBookProperties")
-  
-  axios.delete(`http://localhost:8001/books/${bookId}`)
+  const showBook = document.querySelector("#showBookProperties");
+
+  axios
+    .delete(`http://localhost:8001/books/${bookId}`)
     .then(() => {
-      showSnackbar(`Book ${title} deleted and History item added successfully!`);
-      addToHistory("delete",bookId);
+      showSnackbar(
+        `Book ${title} deleted and History item added successfully!`
+      );
+      addToHistory("delete", bookId);
       black.classList.add("hidden");
       showBook.classList.add("hidden");
     })
@@ -246,40 +289,24 @@ function deleteBook() {
     });
 }
 
-
-function showSnackbar(message) {
-  let snackbarMessage = document.getElementById('snackbar');
-  snackbarMessage.innerText = message;
-  snackbarMessage.classList.remove('show');
-  void snackbarMessage.offsetWidth; 
-  snackbarMessage.classList.add('show');
-  if (snackbarTimeout) {
-      clearTimeout(snackbarTimeout);
-  }
-  snackbarTimeout = setTimeout(function() {
-      snackbarMessage.classList.remove("show");
-  }, 2400);
-}
-
-
 async function addToHistory(oper, bID) {
   const historyItem = {
     operation: oper,
     time: new Date().toISOString(),
-    bookId: bID  
+    bookId: bID,
   };
   try {
     await saveToHistory(historyItem);
   } catch (error) {
-    showSnackbar('Error adding history item');
+    showSnackbar("Error adding history item");
   }
 }
 
 async function saveToHistory(historyItem) {
   try {
-    await axios.post('http://localhost:8001/history', historyItem);
+    await axios.post("http://localhost:8001/history", historyItem);
   } catch (error) {
-    showSnackbar('Error saving history item:');
+    showSnackbar("Error saving history item:");
   }
 }
 
@@ -345,25 +372,23 @@ async function addToFavorites(svgElement) {
   } catch (error) {
     console.log(error);
     showSnackbar(`Error Adding New Book ${title} to favorites`);
-  }
+  }
 }
 
 async function removeFromFavorites(svgElement) {
-  const card = svgElement.parentNode.parentNode
-  const properties = card.querySelector("#updateBookForm")
-  const ID = properties.querySelector("#updateBookId").innerText
-  console.log(ID)
-  const title = properties.querySelector("#updateBookTitle").innerText
+  const card = svgElement.parentNode.parentNode;
+  const properties = card.querySelector("#updateBookForm");
+  const ID = properties.querySelector("#updateBookId").innerText;
+  console.log(ID);
+  const title = properties.querySelector("#updateBookTitle").innerText;
   try {
-  await axios.delete(`http://localhost:8001/favorites/${ID}`);
-            showSnackbar(`Book ${title} remove from favorites successfully!`);
-          } catch (error) {
-            console.log(error)
-            showSnackbar(`Error removing Book ${title} to favorites`)
-          } finally {
-              card.classList.add("hidden")
-              black.classList.add("hidden")
-          }
-
-          
+    await axios.delete(`http://localhost:8001/favorites/${ID}`);
+    showSnackbar(`Book ${title} remove from favorites successfully!`);
+  } catch (error) {
+    console.log(error);
+    showSnackbar(`Error removing Book ${title} to favorites`);
+  } finally {
+    card.classList.add("hidden");
+    black.classList.add("hidden");
+  }
 }
