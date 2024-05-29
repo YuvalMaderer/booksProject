@@ -7,6 +7,7 @@
 @import url(/ajax_project/css/pagination.css);
 @import url(/ajax_project/css/addNewBook.css);
 @import url(/ajax_project/css/history.css);
+@import url(/ajax_project/css/searchByISBN.css);
 
 :root {
   --light-yellow: #FFFAE6;

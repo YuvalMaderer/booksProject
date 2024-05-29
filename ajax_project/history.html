@@ -16,22 +16,48 @@
       </ul>
     </nav>
 
-      <div class="table-container">
-            <table id="operations" class="operations">
-      <thead class="sticky-header">
-      <tr>
-        <th>Id</th>
-        <th>Operation</th>
-        <th>Time</th>
-        <th>Book Id</th>
-      </tr>
-      <thead>
-      <tbody id="tbody"></tbody>
-    </table>
-      </div>
-
+    <div class="table-container">
+      <table id="operations">
+        <thead>
+          <tr>
+            <th id="id-header">Id</th>
+            <th id="operation-header">Operation</th>
+            <th id="time-header">Time</th>
+            <th id="bookId-header">Book Id</th>
+          </tr>
+          <tr>
+            <th>
+              <input type="text" id="id-filter" placeholder="Filter by Id" />
+            </th>
+            <th>
+              <input
+                type="text"
+                id="operation-filter"
+                placeholder="Filter by Operation"
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                id="time-filter"
+                placeholder="Filter by Time"
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                id="bookId-filter"
+                placeholder="Filter by Book Id"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
 
     <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
     <script src="/ajax_project/js/history.js"></script>
   </body>
+  /booksProject
 </html>

@@ -1,0 +1,17 @@
+.searchbyisbn {
+    transition: 0.1s;
+    display: flex;
+    position: absolute;
+    top: 80px;
+    left: 23%;
+    flex-direction: column;
+    width: 800px;
+    background: rgb(255,194,157);
+    background: linear-gradient(90deg, rgba(255,194,157,1) 0%, rgba(255,148,85,0.9417016806722689) 52%, rgba(231,203,94,1) 100%);
+    padding: 10px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    z-index: 998;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}

@@ -103,4 +103,7 @@ async function saveToHistory(historyItem) {
   }
 }
 
-
+document.getElementById('searchBook').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  console.log(e);
+});

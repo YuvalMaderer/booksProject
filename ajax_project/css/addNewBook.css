@@ -11,7 +11,7 @@
     align-items: center;
 }
 
-.addNewBook {
+.addNewBook, .addNewBookByISBN {
     width: 100%;
     display: flex; 
     flex-direction: column;
@@ -27,7 +27,11 @@
     text-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
-.addNewBook:hover {
+.addNewBookByISBN {
+    margin-bottom: 26px;
+}
+
+.addNewBook:hover, .addNewBookByISBN:hover {
     bottom: 5px;
 }
 
@@ -91,6 +95,17 @@
 
 .addButton:active {
   transform: scale(0.95);
+}
+
+.searchBookByISBN {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchBookByISBN input {
+    margin-bottom: 20px;
 }
 
 @media only screen and (max-width: 585px) {

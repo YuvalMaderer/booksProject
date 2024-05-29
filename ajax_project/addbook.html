@@ -8,6 +8,7 @@
   </head>
   <body>
     <div id="snackbar"></div>
+    <div class="searchbyisbn" id="searchbyisbn"></div>
        <nav class="navBar">
       <ul>
         <li><a href="home.html">Home</a></li>
@@ -61,16 +62,14 @@
     </div>
     
     </form>
-    <div class="righ">
-      <h2 class="addNewBook">Add New Book By ISBN</h2>
-      <form action="" class="createBookForm">
-        <input type="text" id="createBookISBN" placeholder="ISBN" />
+    <div class="right">
+      <h2 class="addNewBookByISBN">Add New Book By ISBN</h2>
+      <form id="searchBook" class="searchBookByISBN">
+        <input type="text" id="createBookISBN" placeholder="ISBN" required/>
+        <button type="submit" class="addButton">Search</button>
       </form>
       
     </div>
     </div>
-
-    
-
   </body>
 </html>
