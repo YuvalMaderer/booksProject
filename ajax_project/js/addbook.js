@@ -107,15 +107,17 @@ async function saveToHistory(historyItem) {
   }
 }
 
-document.getElementById('searchBook').addEventListener('submit', async function (e) {
+document.getElementById('searchBook').addEventListener('submit', 
+async function mainSearch(e) {
     e.preventDefault();
     const resultContainer = document.getElementById('searchbyisbn')
+    resultContainer.innerHTML = ''
     const bookName = document.getElementById('createBookName').value;
-    const url = `${GoogleURL}q=${bookName}&key=${apiKey}`
+    const url = `${GoogleURL}q=${bookName}&key=${apiKey}&maxResults=9&startIndex=0&langRestrict=en`
     try {
       const response = await axios.get(url)
       const result = response.data.items
-      result.forEach(book => {
+      for (let book of result) {
         resultContainer.innerHTML += `
         <div class="bookCard" onclick="openBookProperties(this)">
               <span class="hidden" id="bookId">${book.id}</span>
@@ -127,14 +129,15 @@ document.getElementById('searchBook').addEventListener('submit', async function 
             </div>
         </div>
       `
-      });
+      };
       black.classList.remove('hidden')
       resultContainer.classList.remove('hidden')
     } catch (e) {
+      console.log(e)
       showSnackbar('Error fetching books');
     }
-
-});
+  }
+);
 
 function closeBook() {
   const black = document.querySelector(".black");

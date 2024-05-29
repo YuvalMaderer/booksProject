@@ -10,6 +10,7 @@ const booksPerPage = 9;
 let currentPage = 1;
 let totalBooks = 0;
 let allBooks = [];
+let snackbarTimeout
 const spinner = document.getElementById("spinner");
 
 document
