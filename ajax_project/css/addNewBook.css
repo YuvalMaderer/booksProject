@@ -109,8 +109,22 @@
 }
 
 
-@media only screen and (max-width: 585px) {
-    #createBookTitle, #createBookAuthor, #createBookNumPages, #createBookDescription, #createBookImage, #createBookCategories, #createBookNumCopies, #createBookISBN {
+@media only screen and (max-width: 1150px) {
+    #createBookTitle, #createBookAuthor, #createBookNumPages, #createBookDescription, #createBookImage, #createBookCategories, #createBookNumCopies, #createBookISBN, #createBookName {
         width: 300px;
+    }
 }
+@media only screen and (max-width: 850px) {
+    #createBookTitle, #createBookAuthor, #createBookNumPages, #createBookDescription, #createBookImage, #createBookCategories, #createBookNumCopies, #createBookISBN, #createBookName {
+        width: 200px;
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    #createBookTitle, #createBookAuthor, #createBookNumPages, #createBookDescription, #createBookImage, #createBookCategories, #createBookNumCopies, #createBookISBN, #createBookName {
+        width: 150px;
+}
+    .addButton {
+        width: 150px;
+    }
 }
