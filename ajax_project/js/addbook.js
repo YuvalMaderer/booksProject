@@ -108,12 +108,12 @@ async function saveToHistory(historyItem) {
 }
 
 document.getElementById('searchBook').addEventListener('submit', 
-async function mainSearch(e) {
+async function (e) {
     e.preventDefault();
     const resultContainer = document.getElementById('searchbyisbn')
     resultContainer.innerHTML = ''
     const bookName = document.getElementById('createBookName').value;
-    const url = `${GoogleURL}q=${bookName}&key=${apiKey}&maxResults=9&startIndex=0&langRestrict=en`
+    const url = `${GoogleURL}q=${bookName}&key=${apiKey}&maxResults=10&startIndex=0&langRestrict=en`
     try {
       const response = await axios.get(url)
       const result = response.data.items
@@ -124,8 +124,8 @@ async function mainSearch(e) {
                 <img src="${book.volumeInfo.imageLinks.thumbnail}" alt="${book.volumeInfo.title}">
             <div class="bookProperties">
                 <h2>${(book.volumeInfo.title).slice(0, 40) + (book.volumeInfo.title.length > 40 ? "..." : "")}</h2>
-                <p>Author: ${(book.volumeInfo.authors).slice(0, 10) + (book.volumeInfo.authors.length > 10 ? "..." : "")}</p>
-                <p>Description: ${(book.volumeInfo.description).slice(0, 250) + (book.volumeInfo.description.length > 250 ? "..." : "")}</p>
+                <p>Author: ${(book.volumeInfo.authors)}</p>
+                <p>Description: ${(book.volumeInfo.description)}</p>
             </div>
         </div>
       `
