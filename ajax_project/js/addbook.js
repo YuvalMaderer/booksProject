@@ -1,6 +1,5 @@
 let snackbarTimeout;
 const GoogleURL = "https://www.googleapis.com/books/v1/volumes?";
-const apiKey = "AIzaSyBzQ62BPJBOIsbVenJzMhUQQ2fIC8IZADs";
 const black = document.querySelector(".black");
 const blacktwo = document.querySelector(".blacktwo");
 
